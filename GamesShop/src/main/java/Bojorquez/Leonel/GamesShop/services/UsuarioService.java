@@ -1,0 +1,46 @@
+package Bojorquez.Leonel.GamesShop.services;
+
+import Bojorquez.Leonel.GamesShop.models.Usuario;
+import Bojorquez.Leonel.GamesShop.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+/**
+ * Lógica de usuarios: registro y autenticación.
+ */
+@Service
+public class UsuarioService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    /**
+     * Registra un usuario guardando su contraseña cifrada con BCrypt.
+     */
+    public Usuario registrarUsuario(Usuario usuario) {
+        usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
+        return usuarioRepository.save(usuario);
+    }
+
+    /**
+     * Devuelve el usuario si el correo existe y la contraseña coincide; si no, null.
+     */
+    public Usuario autenticarUsuario(String email, String password) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            // matches() cifra la contraseña escrita y la compara con el hash guardado
+            if (passwordEncoder.matches(password, usuario.getContrasenia())) {
+                return usuario;
+            }
+        }
+        return null;
+    }
+}

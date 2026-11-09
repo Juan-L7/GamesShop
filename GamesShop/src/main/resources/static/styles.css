@@ -1,0 +1,104 @@
+:root {
+    --primary: #1e186b;
+    --secondary: #403cb2;
+    --accent: #403cb2;
+    --green: #86ee41;
+    --background: #191a1c;
+    --text-muted: #a0a0a0;
+}
+
+body {
+    background-color: var(--background);
+    color: white;
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.panel {
+    background-color: #242529;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.divFragmento {
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.panel img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.game-detail {
+    display: flex;
+    gap: 30px;
+    background-color: #242529;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.game-detail img {
+    width: 300px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.game-descripcion {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Componentes y Botones */
+.pill {
+    background-color: var(--primary);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: inline-block;
+    width: fit-content;
+}
+
+.text-gradient {
+    background: linear-gradient(to right, #ffffff, var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: var(--secondary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary);
+}

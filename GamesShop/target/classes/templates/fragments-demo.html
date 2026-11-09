@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jugando con Fragmentos</title>
+    <link href="/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="panel">
+        <h3>El fragmento</h3>
+        <p>Definimos el fragmento usando <code>th:fragment="miFragmento"</code></p>
+
+        <div th:fragment="miFragmento" class="divFragmento" style="background: linear-gradient(to right, var(--primary), var(--accent)); color: white; padding: 10px; border-radius: 4px;">
+            Hola soy el contenido del Fragmento. Fuí diseñado una vez
+        </div>
+    </div>
+
+    <div class="panel" style="margin-bottom: 20px;">
+        <h3>Usando <code>th:replace</code></h3>
+        <p>El div contenedor original <b>desaparece</b> y es reemplazado completamente por el div del fragmento.</p>
+        <div th:replace="~{:: miFragmento}">
+            (Este texto y este div desaparecerán)
+        </div>
+    </div>
+
+    <div class="panel" style="margin-bottom: 20px;">
+        <h3>Usando <code>th:insert</code></h3>
+        <p>El fragmento se inserta <b>dentro</b> del div contenedor original. El div original se conserva.</p>
+        <div style="border: 2px dashed #00ffcc; padding: 10px;" th:insert="~{:: miFragmento}">
+            (Este texto desaparecerá, pero el div con borde punteado se queda y envuelve al fragmento)
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>Usando <code>th:include</code> <small>(Obsoleto en Thymeleaf 3, usa insert en su lugar)</small></h3>
+        <p>Solo inserta el <b>contenido</b> interno del fragmento dentro del div contenedor.</p>
+        <div style="border: 2px dashed #e4b363; padding: 10px;" th:include="~{:: miFragmento}">
+            (Este texto se reemplaza por el texto del fragmento, perdiendo el color rojo del div original del fragn
+        </div>
+    </div>
+
+</body>
+</html>

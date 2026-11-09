@@ -1,0 +1,58 @@
+<th:block th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+    <title>Catálogo de Juegos - GameVault</title>
+    <!-- Catálogo público: cualquiera lo ve, con o sin sesión.
+         Los botones de Editar y Eliminar ahora viven en mis-juegos.html, donde sólo ves tus juegos. -->
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 class="text-gradient">Catálogo de Juegos</h2>
+        </div>
+
+        <!-- BARRA DE BÚSQUEDA -->
+        <div style="margin-bottom: 30px;">
+            <form action="/juegos" method="get" style="display: flex; gap: 10px;">
+                <input type="text" name="buscar" th:value="${busquedaActual}" placeholder="Buscar juego por título o categoría..." style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-color);">
+                <button type="submit" class="btn btn-secondary">Buscar</button>
+                <a th:if="${busquedaActual != null}" href="/juegos" class="btn btn-secondary" style="background: var(--bg-surface);">Limpiar</a>
+            </form>
+        </div>
+
+        <div class="grid">
+            <div th:each="juego : ${juegos}" class="panel" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+
+                <!-- 1. Hacemos que dar clic en la imagen te lleve al detalle -->
+                <a th:href="@{/juego/{id}(id=${juego.id})}">
+                    <img th:src="${#strings.startsWith(juego.portadaUrl, 'http')} ? ${juego.portadaUrl} : @{/uploads/{img}(img=${juego.portadaUrl})}"
+                         alt="Portada"
+                         style="width: 100%; height: 300px; object-fit: cover; display: block;" />
+                </a>
+
+                <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                        <!-- 2. El título también es un enlace al detalle -->
+                        <h3 style="margin: 0;">
+                            <a th:href="@{/juego/{id}(id=${juego.id})}"
+                               th:text="${juego.titulo}"
+                               style="color: inherit; text-decoration: none;">
+                                Título del Juego
+                            </a>
+                        </h3>
+                        <span th:text="${juego.precio != null ? '$' + juego.precio : 'Gratis'}" style="font-weight: bold; color: var(--primary);">Precio</span>
+                    </div>
+
+                    <span th:text="${juego.categoria}" style="display: inline-block; background: rgba(0, 255, 136, 0.1); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 10px; width: fit-content;">Categoría</span>
+
+                    <p th:text="${juego.descripcion}" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0; margin-bottom: 20px; flex-grow: 1;">Descripción breve del juego.</p>
+
+                    <!-- 3. Botón para ver el detalle -->
+                    <div style="display: flex; gap: 10px;">
+                        <a th:href="@{/juego/{id}(id=${juego.id})}" class="btn btn-secondary" style="flex: 1; text-align: center;">Ver Detalle</a>
+                        <button class="btn btn-primary" style="flex: 1; text-align: center;" onclick="alert('¡Gracias por tu interés! Esta función estará disponible pronto.')">Adquirir</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</th:block>
+
+
