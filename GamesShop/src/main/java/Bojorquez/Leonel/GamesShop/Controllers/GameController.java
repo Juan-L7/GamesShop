@@ -1,7 +1,10 @@
 package Bojorquez.Leonel.GamesShop.Controllers;
 
 import Bojorquez.Leonel.GamesShop.models.Juego;
+import Bojorquez.Leonel.GamesShop.models.Usuario;
 import Bojorquez.Leonel.GamesShop.services.JuegoService;
+import Bojorquez.Leonel.GamesShop.services.UsuarioService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,8 +24,12 @@ public class GameController {
     @Autowired
     private JuegoService juegoService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     private static List<Juego> juegosDb = new ArrayList<>();
     private static long idCounter = 1;
+
 
     private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
@@ -55,25 +62,43 @@ public class GameController {
                                @RequestParam("descripcion") String descripcion,
                                @RequestParam("precio") Double precio,
                                @RequestParam("categoria") String categoria,
-                               @RequestParam("portada") MultipartFile portada) {
+                               @RequestParam("portada") MultipartFile portada, HttpSession httpSession) {
 
 
 
         Juego nuevoJuego = new Juego();
-        nuevoJuego. setTitulo (titulo); nuevoJuego. setCategoria(categoria); nuevoJuego.setDescripcion (descripcion);
+        nuevoJuego. setTitulo (titulo);
+        nuevoJuego. setCategoria(categoria);
+        nuevoJuego.setDescripcion (descripcion);
         nuevoJuego. setPrecio (precio);
+
+        nuevoJuego.setUsuario(usuarioService.obtenerUsuarioLogueado());
+
         juegoService.guardarJuego(nuevoJuego, portada);
-        return "redirect:/juegos";
+        return "redirect:/mis-juegos";
+
+    }
+
+    @GetMapping("/mis-juegos")
+    public String dashboard(Model model){
+        Usuario logueado = usuarioService.obtenerUsuarioLogueado();
+
+        model.addAttribute("juegos", juegoService.obtenerJuegosPorUsuario(logueado.getId()));
+        model.addAttribute("usuario", logueado);
+
+        return "mis-juegos";
     }
 
     @GetMapping("juegos/editar/{id}")
     public String editarJuego(@PathVariable Long id, Model model){
         Juego juego = juegoService.obtenerJuegoPorId(id);
-        if(juego != null){
+        Usuario logueado = usuarioService.obtenerUsuarioLogueado();
+
+        if(juego != null && juego.getUsuario().getId().equals(logueado.getId())){
             model.addAttribute("juego", juego);
             return "formulario";
         }
-        return "juegos";
+        return "redirect:/mis-juegos";
     }
 
     @PostMapping("/juegos/editar/{id}")
@@ -81,7 +106,7 @@ public class GameController {
                                    @RequestParam("titulo") String titulo,
                                    @RequestParam("descripcion") String descripcion,
                                    @RequestParam("precio") Double precio,
-                                   @RequestParam("categorias") String categoria,
+                                   @RequestParam("categoria") String categoria,
                                    @RequestParam(value = "portada", required = false) MultipartFile portada){
         Juego juegoExistente = juegoService.obtenerJuegoPorId(id);
         if(juegoExistente != null){
@@ -92,17 +117,19 @@ public class GameController {
             juegoService.guardarJuego(juegoExistente, portada);
         }
 
-        return "redirect:/juegos";
+        return "redirect:/mis-juegos";
     }
 
     @PostMapping("/juegos/eliminar/{id}")
     public String eliminarJuego(@PathVariable Long id){
         Juego juegoExistente = juegoService.obtenerJuegoPorId(id);
-        if(juegoExistente != null){
+        Usuario logueado = usuarioService.obtenerUsuarioLogueado();
+
+        if(juegoExistente != null && juegoExistente.getUsuario().getId().equals(logueado.getId())){
             juegoService.eliminarJuego(id);
         }
 
-        return "redirect:/juegos";
+        return "redirect:/mis-juegos";
     }
 
     @GetMapping("/juego/{id}")

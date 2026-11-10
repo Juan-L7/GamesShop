@@ -9,9 +9,20 @@
     <nav>
         <a th:href="@{/juegos}" class="nav-brand">GamesShop</a>
         <div class="nav-links">
-            <a th:href="@{/juegos}">Catalogo</a>
-            <a th:href="@{/juegos/nuevo}">Subir juego</a>
-            <a th:href="@{/fragments-demo}" style="color: var(--green)">[Teoria]</a>
+            <a th:href="@{/juegos}">Inicio</a>
+            <a th:href="@{/fragments-demo}" style="color: var(--green)">Fragmentos</a>
+
+            <th:block th:if="${session.usuario_id} != null">
+                <a th:href="@{/mis-juegos}">Mis videojuegos</a>
+                <a th:href="@{/juegos/nuevo}">Subir juego</a>
+                <a th:href="@{/logout}">Cerrar sesion</a>
+            </th:block>
+            <th:block th:if="${session.usuario_id} == null">
+                <a th:href="@{/login}">Iniciar sesion</a>
+                <a th:href="@{/registrar}">Registrarse</a>
+            </th:block>
+
+
         </div>
     </nav>
 

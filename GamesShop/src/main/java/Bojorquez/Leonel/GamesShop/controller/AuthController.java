@@ -2,6 +2,7 @@ package Bojorquez.Leonel.GamesShop.controller;
 
 import Bojorquez.Leonel.GamesShop.models.Usuario;
 import Bojorquez.Leonel.GamesShop.services.UsuarioService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,20 +27,23 @@ public class AuthController {
     @PostMapping("/login")
     public String procesarLogin(@RequestParam("email") String email,
                                 @RequestParam("password") String password,
-                                Model model) {
+                                Model model,
+                                HttpSession session
+                                ) {
 
         Usuario usuario = usuarioService.autenticarUsuario(email, password);
 
         if (usuario != null) {
             // Las credenciales son correctas, pero todavía no recordamos quién es:
             // en cuanto cambie de página, la aplicación lo olvida.
-            model.addAttribute("mensaje", "Bienvenido, " + usuario.getNombre());
-            return "login";
+            session.setAttribute("usuario_id", usuario.getId());
+            return "redirect:/mis-juegos";
         } else {
             model.addAttribute("error", "Credenciales inválidas. Inténtalo de nuevo.");
             return "login";
         }
     }
+
 
     @GetMapping("/registro")
     public String mostrarRegistro(Model model) {
@@ -52,5 +56,11 @@ public class AuthController {
     public String procesarRegistro(Usuario usuario) {
         usuarioService.registrarUsuario(usuario);
         return "redirect:/login?registrado=true";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        session.invalidate();
+        return "redirect:/";
     }
 }

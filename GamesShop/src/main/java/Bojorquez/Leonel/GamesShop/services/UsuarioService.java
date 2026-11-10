@@ -2,6 +2,7 @@ package Bojorquez.Leonel.GamesShop.services;
 
 import Bojorquez.Leonel.GamesShop.models.Usuario;
 import Bojorquez.Leonel.GamesShop.repository.UsuarioRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ public class UsuarioService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private HttpSession session;
 
     /**
      * Registra un usuario guardando su contraseña cifrada con BCrypt.
@@ -39,6 +43,18 @@ public class UsuarioService {
             // matches() cifra la contraseña escrita y la compara con el hash guardado
             if (passwordEncoder.matches(password, usuario.getContrasenia())) {
                 return usuario;
+            }
+        }
+        return null;
+    }
+
+    public Usuario obtenerUsuarioLogueado(){
+        Long usuarioID = (Long) session.getAttribute("usuario_id");
+
+        if(usuarioID != null){
+            Optional<Usuario> usuario = usuarioRepository.findById(usuarioID);
+            if(usuario.isPresent()){
+                return usuario.get();
             }
         }
         return null;

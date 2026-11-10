@@ -36,7 +36,7 @@ public class JuegoService {
         if (juego != null) {
             if (juego.getPortadaUrl() != null && !juego.getPortadaUrl().equals("default.png")) {
                 try {
-                    Path uploadPath = Paths.get("target/classes/static/uploads");
+                    Path uploadPath = Paths.get(UPLOAD_DIR);
                     Path filePath = uploadPath.resolve(juego.getPortadaUrl());
                     Files.deleteIfExists(filePath);
                 } catch (IOException e) {
@@ -49,11 +49,11 @@ public class JuegoService {
     }
 
     public void guardarJuego(Juego juego, MultipartFile portada) {
-        String urlImagen = "default.png";
+        String urlImagen = juego.getPortadaUrl();
 
-        if (!portada.isEmpty()) {
+        if (portada != null && !portada.isEmpty()) {
             try {
-                Path uploadPath = Paths.get("target/classes/static/uploads");
+                Path uploadPath = Paths.get(UPLOAD_DIR);
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
@@ -70,7 +70,10 @@ public class JuegoService {
             }
         }
 
-        juego.setPortadaUrl(urlImagen);
+        if (urlImagen != null) {
+            juego.setPortadaUrl(urlImagen);
+        }
+
         juegoRepository.save(juego);
     }
 
@@ -79,6 +82,10 @@ public class JuegoService {
             return listarTodos();
         }
         return juegoRepository.findByTituloContainingIgnoreCase(palabra);
+    }
+
+    public List<Juego> obtenerJuegosPorUsuario(Long usuarioId){
+        return juegoRepository.findByUsuarioId(usuarioId);
     }
 
 
